@@ -6,7 +6,15 @@ const { Client, Collection, Intents } = require('discord.js');
 const { token } = process.env.DISCORD_TOKEN;
 
 // Create a new client instance
-const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES] });
+const client = new Client({ 
+	intents: [
+		Intents.FLAGS.GUILDS, 
+		Intents.FLAGS.GUILD_MESSAGES
+	] 
+});
+
+// Command prefix
+const PREFIX = "ex ";
 
 client.commands = new Collection();
 
@@ -52,9 +60,21 @@ client.on('interactionCreate', async interaction => {
 
 
 // Listens for messages
-// client.on('messageCreate', async message => {
+client.on('messageCreate', async message => {
+	if (message.content.toLowerCase().startsWith(PREFIX)) {
+		const [commandName, ...args] = message.content.trim().substring(PREFIX.length).split(' ');
+		const command = client.commands.get(commandName);
 
-// });
+		if (!command) return;
+
+		try {
+			await command.execute(message, args);
+		} catch (error) {
+			console.error(error);
+			await interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true });
+		}
+	}
+});
 
 // Login to Discord with your client's token
 client.login(token);
