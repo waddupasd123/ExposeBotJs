@@ -1,6 +1,7 @@
 // Require the necessary discord.js classes
 if (process.env.NODE_ENV != 'production') {
-  require('dotenv').config();
+	console.log('Hello World');
+  	require('dotenv').config();
 }
 const fs = require('fs');
 const { Client, Collection, Intents } = require('discord.js');
