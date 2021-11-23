@@ -7,6 +7,7 @@ if (process.env.NODE_ENV != 'production') {
 const fs = require('fs');
 const { Client, Collection, Intents } = require('discord.js');
 const { token } = process.env.DISCORD_TOKEN;
+console.log(process.env.DISCORD_TOKEN);
 
 // Create a new client instance
 const client = new Client({ intents: [Intents.FLAGS.GUILDS] });
