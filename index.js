@@ -1,5 +1,5 @@
 // Require the necessary discord.js classes
-if (process.env.NODE_ENV !== 'production') {
+if (!process.env.NODE_ENV) {
 	require('dotenv').config();
 }
 const fs = require('fs');
