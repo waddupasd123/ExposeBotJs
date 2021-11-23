@@ -4,9 +4,13 @@ if (process.env.NODE_ENV != 'production') {
 	console.log('Hello World');
   	require('dotenv').config();
 }
+console.log("HERE 0");
 const fs = require('fs');
+console.log("HERE 1");
 const { Client, Collection, Intents } = require('discord.js');
+console.log("HERE 2");
 const { token } = process.env.DISCORD_TOKEN;
+console.log("TOKEN IS: ");
 console.log(process.env.DISCORD_TOKEN);
 
 // Create a new client instance
