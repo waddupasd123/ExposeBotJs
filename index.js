@@ -1,9 +1,13 @@
 // Require the necessary discord.js classes
 require('dotenv').config();
 
+const { REST } = require('@discordjs/rest');
+const { Routes } = require('discord-api-types/v9');
 const fs = require('fs');
 const { Client, Collection, Intents } = require('discord.js');
 const { token } = process.env.DISCORD_TOKEN;
+const clientId = process.env.CLIENT_ID;
+const guildId = process.env.GUILD_ID;
 
 // Create a new client instance
 const client = new Client({ 
@@ -33,12 +37,14 @@ for (const file of eventFiles) {
 
 // Commands
 const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
+const commands = [];
 
 for (const file of commandFiles) {
 	const command = require(`./commands/${file}`);
 	// Set a new item in the Collection
 	// With the key as the command name and the value as the exported module
 	client.commands.set(command.data.name, command);
+	commands.push(command.data.toJSON());
 }
 
 
@@ -61,6 +67,8 @@ client.on('interactionCreate', async interaction => {
 
 // Listens for messages
 client.on('messageCreate', async message => {
+	if (message.author.bot) return;
+
 	if (message.content.toLowerCase().startsWith(PREFIX)) {
 		const [commandName, ...args] = message.content.trim().substring(PREFIX.length).split(' ');
 		const command = client.commands.get(commandName);
@@ -75,6 +83,25 @@ client.on('messageCreate', async message => {
 		}
 	}
 });
+
+
+// Refresh slash commands for testing
+const rest = new REST({ version: '9' }).setToken(process.env.DISCORD_TOKEN);
+
+(async () => {
+	try {
+		console.log('Started refreshing application (/) commands.');
+
+		await rest.put(
+			Routes.applicationGuildCommands(clientId, guildId),
+			{ body: commands },
+		);
+
+		console.log('Successfully reloaded application (/) commands.');
+	} catch (error) {
+		console.error(error);
+	}
+})();
 
 // Login to Discord with your client's token
 client.login(token);
