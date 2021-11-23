@@ -51,8 +51,10 @@ client.on('interactionCreate', async interaction => {
 });
 
 
-client.on('messageCreate', async message => {
-});
+// Listens for messages
+// client.on('messageCreate', async message => {
+
+// });
 
 // Login to Discord with your client's token
 client.login(token);
