@@ -1,5 +1,7 @@
 // Require the necessary discord.js classes
-require("dotenv").config();
+if (process.env.NODE_ENV !== 'production') {
+	require('dotenv').config();
+}
 const fs = require('fs');
 const { Client, Collection, Intents } = require('discord.js');
 const { token } = process.env.DISCORD_TOKEN;
