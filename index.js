@@ -1,6 +1,6 @@
 // Require the necessary discord.js classes
 console.log('STARTING TEST');
-if (process.env.NODE_ENV != 'production') {
+if (process.env.NODE_ENV != 'prasd') {
 	console.log('Hello World');
   	require('dotenv').config();
 }
