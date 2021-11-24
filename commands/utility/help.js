@@ -29,7 +29,7 @@ async function sendEmbed(interaction, args) {
 
 	if (!args[0]) {
 		let embed = new MessageEmbed()
-        .setTitle(`List of available commands (${client.commands.size})`)
+        .setTitle(`List of available commands (${client.commands.size}) - Prefix: ex `)
 		.setColor(0xFD0061);
 
 		const categories = [
@@ -77,7 +77,7 @@ async function sendEmbed(interaction, args) {
 		const collector = message.createMessageComponentCollector({
 			filter,
 			componentType: 'SELECT_MENU',
-			time: 15000,
+			time: 10000,
 		});
 
 		collector.on('collect', async (collected) => {
@@ -91,7 +91,7 @@ async function sendEmbed(interaction, args) {
 				//if (!category) return;
 
 				const categoryEmbed = new MessageEmbed()
-					.setTitle(`${value} commands`)
+					.setTitle(`${value} commands - Prefix: ex `)
 					.addFields(
 						category.commands.map((command) => {
 							return {
@@ -101,12 +101,13 @@ async function sendEmbed(interaction, args) {
 							}
 						})
 					);
+				collector.resetTimer();
 				await collected.update({ embeds: [categoryEmbed] })
 			}
 		});
 
-		collector.on('end', () => {
-			interaction.editReply({ components: []})
+		collector.on('end', collected => {
+			message.edit({ components: [] })
 		})
 
 	} else {
