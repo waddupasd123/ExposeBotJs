@@ -13,7 +13,8 @@ const guildId = process.env.GUILD_ID;
 const client = new Client({ 
 	intents: [
 		Intents.FLAGS.GUILDS, 
-		Intents.FLAGS.GUILD_MESSAGES
+		Intents.FLAGS.GUILD_MESSAGES,
+		Intents.FLAGS.GUILD_MESSAGE_REACTIONS,
 	] 
 });
 
@@ -52,17 +53,17 @@ for (const folder of commandFolders) {
 
 
 // Listens for interactions
-client.on('interactionCreate', async message => {
-	if (!message.isCommand()) return;
-	const command = client.commands.get(message.commandName);
+client.on('interactionCreate', async interaction => {
+	if (!interaction.isCommand()) return;
+	const command = client.commands.get(interaction.commandName);
 
 	if (!command) return;
 
 	try {
-		await command.execute(message);
+		await command.execute(interaction);
 	} catch (error) {
 		console.error(error);
-		await message.reply({ content: 'There was an error while executing this command!', ephemeral: true });
+		await interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true });
 	}
 
 });

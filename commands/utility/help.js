@@ -69,18 +69,18 @@ async function sendEmbed(interaction, args) {
 			);
 
 		// Initial message
-		await interaction.reply({ embeds: [embed], components: [selectMenu] })
+		const message = await interaction.reply({ embeds: [embed], components: [selectMenu], fetchReply: true });
+
 
 		const filter = (interaction) => interaction.user.id === author.id;
 
-		const collector = interaction.createMessageComponentCollector({
+		const collector = message.createMessageComponentCollector({
 			filter,
 			componentType: 'SELECT_MENU',
 			time: 15000,
 		});
 
 		collector.on('collect', async (collected) => {
-			console.log(collected);
 			if (collected.customId === 'help-menu') {
 				const [ value ] = collected.values;
 				const category = commands.find(
@@ -101,14 +101,11 @@ async function sendEmbed(interaction, args) {
 							}
 						})
 					);
-
-				console.log("UPDATED")
 				await collected.update({ embeds: [categoryEmbed] })
 			}
 		});
 
 		collector.on('end', () => {
-			console.log("END");
 			interaction.editReply({ components: []})
 		})
 
