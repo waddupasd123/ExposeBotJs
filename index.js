@@ -88,6 +88,12 @@ client.on('messageCreate', async message => {
 	}
 });
 
+// Listens for message delete
+client.snipes = new Collection();
+client.on('messageDelete', async message => {
+	if (message.author.bot) return;
+});
+
 
 // Refresh slash commands for testing
 const rest = new REST({ version: '9' }).setToken(process.env.DISCORD_TOKEN);
