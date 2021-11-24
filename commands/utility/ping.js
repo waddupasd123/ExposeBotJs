@@ -12,6 +12,6 @@ module.exports = {
 		.setName('ping')
 		.setDescription('Replies with Pong!'),
 	async execute(interaction) {
-		await interaction.reply((`🏓 Latency is ${interaction.createdTimestamp - Date.now()}ms. API Latency is ${Math.round(interaction.client.ws.ping)}ms`));
+		await interaction.reply((`🏓 Latency is ${Date.now() - interaction.createdTimestamp}ms. API Latency is ${Math.round(interaction.client.ws.ping)}ms`));
 	},
 };

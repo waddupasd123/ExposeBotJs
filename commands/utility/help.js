@@ -1,5 +1,5 @@
 const { SlashCommandBuilder} = require('@discordjs/builders');
-const { MessageEmbed, MessageActionRow, MessageSelectMenu, Message } = require('discord.js');
+const { MessageEmbed, MessageActionRow, MessageSelectMenu } = require('discord.js');
 
 module.exports = {
 	command: "help",
@@ -73,31 +73,38 @@ async function sendEmbed(interaction, args) {
 
 		const filter = (interaction) => interaction.user.id === author.id;
 
-		const collector = interaction.channel.createMessageComponentCollector({
+		const collector = interaction.createMessageComponentCollector({
 			filter,
 			componentType: 'SELECT_MENU',
 			time: 15000,
 		});
 
 		collector.on('collect', async (collected) => {
-			const [ value ] = collected.values;
-			const category = commands.find(
-				(x) => x.category === value
-			);
-
-			const categoryEmbed = new MessageEmbed()
-				.setTitle(`${value} commands`)
-				.addFields(
-					category.commands.map((command) => {
-						return {
-							name: `\`${command.name}\``,
-							value: `${command.description}\nUsage: ${command.usage}`,
-							inline: false,
-						}
-					})
+			console.log(collected);
+			if (collected.customId === 'help-menu') {
+				const [ value ] = collected.values;
+				const category = commands.find(
+					(x) => x.category === value
 				);
 
-			await collected.update({ embeds: [categoryEmbed] })
+				//console.log(collected);
+				//if (!category) return;
+
+				const categoryEmbed = new MessageEmbed()
+					.setTitle(`${value} commands`)
+					.addFields(
+						category.commands.map((command) => {
+							return {
+								name: `\`${command.name}\``,
+								value: `${command.description}\nUsage: ${command.usage}`,
+								inline: false,
+							}
+						})
+					);
+
+				console.log("UPDATED")
+				await collected.update({ embeds: [categoryEmbed] })
+			}
 		});
 
 		collector.on('end', () => {
@@ -107,7 +114,7 @@ async function sendEmbed(interaction, args) {
 
 	} else {
 		const command = client.commands.find(command => command.name.toLowerCase() === args[0].toLowerCase());
-		
+
 		if (!command) return await interaction.reply('???');
 
 		let embed = new MessageEmbed()

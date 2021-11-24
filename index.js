@@ -52,19 +52,19 @@ for (const folder of commandFolders) {
 
 
 // Listens for interactions
-client.on('interactionCreate', async interaction => {
-	if (interaction.isCommand()) {
-		const command = client.commands.get(interaction.commandName);
+client.on('interactionCreate', async message => {
+	if (!message.isCommand()) return;
+	const command = client.commands.get(message.commandName);
 
-		if (!command) return;
+	if (!command) return;
 
-		try {
-			await command.execute(interaction);
-		} catch (error) {
-			console.error(error);
-			await interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true });
-		}
+	try {
+		await command.execute(message);
+	} catch (error) {
+		console.error(error);
+		await message.reply({ content: 'There was an error while executing this command!', ephemeral: true });
 	}
+
 });
 
 
