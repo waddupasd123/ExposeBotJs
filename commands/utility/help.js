@@ -43,7 +43,7 @@ async function sendEmbed(interaction, args) {
 				return {
 					name: command.name || 'No name :|',
 					description: command.description || 'No description :|',
-					usage: command.usage || '¯\\_(ツ)_/¯',
+					usage: command.usage || `¯\\_(ツ)_/¯`,
 				};
 			});
 			return {
