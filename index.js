@@ -1,13 +1,14 @@
 // Require the necessary discord.js classes
 require('dotenv').config();
 
+const fs = require('fs');
 const { REST } = require('@discordjs/rest');
 const { Routes } = require('discord-api-types/v9');
-const fs = require('fs');
 const { Client, Collection, Intents } = require('discord.js');
 const { token } = process.env.DISCORD_TOKEN;
 const clientId = process.env.CLIENT_ID;
 const guildId = process.env.GUILD_ID;
+
 
 // Create a new client instance
 const client = new Client({ 
@@ -112,6 +113,27 @@ const rest = new REST({ version: '9' }).setToken(process.env.DISCORD_TOKEN);
 		console.error(error);
 	}
 })();
+
+
+
+// Google 
+const { google } = require('googleapis');
+
+const keysEnvVar = process.env['GOOGLE_CREDS'];
+if (!keysEnvVar) {
+	throw new Error('The $CREDS environment variable was not found!');
+  }
+const keys = JSON.parse(keysEnvVar);
+
+const SCOPES = ['https://www.googleapis.com/auth/drive'];
+
+// init the auth
+const auth = google.auth.fromJSON(keys);
+auth.scopes = SCOPES;
+
+client.drive = google.drive({version: 'v3', auth});
+
+
 
 // Login to Discord with your client's token
 client.login(token);
