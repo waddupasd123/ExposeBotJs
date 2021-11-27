@@ -12,11 +12,11 @@ module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('help')
 		.setDescription('List of commands')
-        .addStringOption(option => option.setName('input').setDescription('Enter a command')),
+        .addStringOption(option => option.setName('command').setDescription('Enter a command')),
 	async execute(interaction, args) {
 		if (args == undefined) {
 			args = [];
-			args.push(interaction.options.getString('input'));
+			args.push(interaction.options.getString('command'));
 		}
         sendEmbed(interaction, args);
         

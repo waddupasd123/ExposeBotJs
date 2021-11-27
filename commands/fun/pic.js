@@ -77,7 +77,7 @@ module.exports = {
         .then(async ok => {
             console.log(ok);
             try {
-                await message.edit({content: "😫", files: [fileData.name]});
+                await message.edit({content: " ", files: [fileData.name]});
                 try {
                     await unlink(fileData.name);
                     await interaction.client.pics.delete(fileData.id);

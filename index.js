@@ -86,7 +86,7 @@ client.on('messageCreate', async message => {
 			await command.execute(message, args);
 		} catch (error) {
 			console.error(error);
-			await interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true });
+			await message.reply({ content: 'There was an error while executing this command!', ephemeral: true });
 		}
 	}
 });
@@ -136,6 +136,26 @@ auth.scopes = SCOPES;
 client.drive = google.drive({version: 'v3', auth});
 // Current files
 client.pics = new Collection();
+
+
+
+// League 
+const { RiotAPI, RiotAPITypes } = require('@fightmegg/riot-api');
+// const config = RiotAPITypes.Config = {
+//     debug: false,
+//     cache: {
+//         cacheType: 'local',
+//         ttls: {
+//             byMethod: {
+//                 [RiotAPITypes.METHOD_KEY.SUMMONER.GET_BY_SUMMONER_NAME]: 5000, // ms
+//             }
+//         }
+//     }
+// }
+
+client.rAPI = new RiotAPI(process.env.RIOT_KEY);
+
+
 
 // Login to Discord with your client's token
 client.login(token);
