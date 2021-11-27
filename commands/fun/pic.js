@@ -1,6 +1,7 @@
 const { SlashCommandBuilder} = require('@discordjs/builders');
+const { Console } = require('console');
 const fs = require('fs');
-const { resolve } = require('path');
+const { unlink } =  require('fs/promises');
 
 module.exports = {
     command: "pic",
@@ -34,14 +35,14 @@ module.exports = {
         } while (nextPageToken);
 
         // Download random file
-        fileData = fileList[Math.floor(Math.random()*fileList.length)]; 
+        const fileData = fileList[Math.floor(Math.random()*fileList.length)]; 
         // Check if exists to prevent error
         const exists = interaction.client.pics.get(fileData.id);
         if (exists) return await message.reply('calm down...');
         interaction.client.pics.set(fileData.id, {
             name: fileData.name,
         })
-        console.log(interaction.client.pics);
+
         const isItDoneYet = drive.files
         .get({fileId: fileData.id, alt: 'media'}, {responseType: 'stream'})
         .then(res => {
@@ -72,49 +73,54 @@ module.exports = {
         });
 
         // Send after download finish
-        const isItSentYet = isItDoneYet
-        .then(ok => {
-            console.log(ok)
-            resolve(ok);
-            console.log(`FILEDATA: ${fileData.name}`)
-            return message.edit({content: "😫", files: [fileData.name]});
-
+        isItDoneYet
+        .then(async ok => {
+            console.log(ok);
+            try {
+                await message.edit({content: "😫", files: [fileData.name]});
+                try {
+                    await unlink(fileData.name);
+                    await interaction.client.pics.delete(fileData.id);
+                    console.log(`Deleted ${fileData.name}`);
+                } catch (error) {
+                    await interaction.client.pics.delete(fileData.id);
+                    console.log(error);
+                }
+            } catch (error) {
+                console.log(error);
+                try {
+                    await unlink(fileData.name);
+                    await interaction.client.pics.delete(fileData.id);
+                    console.log(`Deleted ${fileData.name}`);
+                } catch (error) {
+                    await interaction.client.pics.delete(fileData.id);
+                    console.log(error);
+                }
+            }
         })
-        .catch(err => {
+        .catch(async err => {
             console.error(err)
-            reject(err);
-            return message.edit("it no work ;(");
-        })
-    
-        // Delete after send finish
-        isItSentYet
-        .then(ok => {
-            fs.stat(fileData.name, function (err, stats) {         
-                if (err) {
-                    console.log("ERROR");
-                    return console.error(err);
+            try {
+                await message.edit("it no work ;(");
+                try {
+                    await unlink(fileData.name);
+                    await interaction.client.pics.delete(fileData.id);
+                    console.log(`Deleted ${fileData.name}`);
+                } catch (error) {
+                    await interaction.client.pics.delete(fileData.id);
+                    console.log(error);
                 }
-             
-                fs.unlink(fileData.name, function(err){
-                    interaction.client.pics.delete(fileData.id);
-                    if(err) return console.log(err);
-                    console.log('file deleted successfully');
-                });  
-             });  
-        })
-        .catch(err => {
-            fs.stat(fileData.name, function (err, stats) {         
-                if (err) {
-                    return console.error(err);
+            } catch (error) {
+                console.log(error);
+                try {
+                    await unlink(fileData.name);
+                    await interaction.client.pics.delete(fileData.id);
+                    console.log(`Deleted ${fileData.name}`);
+                } catch (error) {
+                    await interaction.client.pics.delete(fileData.id);
+                    console.log(error);
                 }
-                fs.unlink(fileData.name, function(err){
-                    interaction.client.pics.delete(fileData.id);
-                    if(err) return console.log(err);
-                    console.log('file deleted successfully');
-                });  
-             }); 
+            }
         })
-
-
     },
 }
