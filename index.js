@@ -132,8 +132,8 @@ const auth = google.auth.fromJSON(keys);
 auth.scopes = SCOPES;
 
 client.drive = google.drive({version: 'v3', auth});
-
-
+// Current files
+client.pics = new Collection();
 
 // Login to Discord with your client's token
 client.login(token);
