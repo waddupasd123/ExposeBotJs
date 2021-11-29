@@ -3,16 +3,16 @@ const { MessageEmbed } = require('discord.js');
 const { PlatformId, RiotAPITypes, RiotAPI } = require('@fightmegg/riot-api');
 
 module.exports = {
-    command: "lolrank",
-	name: "Lolrank",
+    command: "lolflex",
+	name: "Lolflex",
 	category: "Riot",
-	description: "Get league rank by summoner name and region (Default region: OC1)",
-	usage: "lolrank <summoner name> <region>",
+	description: "Get league flex rank by summoner name and region (Default region: OC1)",
+	usage: "lolflex <summoner name> <region>",
 	accessible: "Members",
 	aliases: [""],
     data: new SlashCommandBuilder()
-        .setName('lolrank')
-        .setDescription('Get league rank by summoner name and region (Default region: OC1)')
+        .setName('lolflex')
+        .setDescription('Get league flex rank by summoner name and region (Default region: OC1)')
         .addStringOption(option => 
             option.setName('summoner_name')
                   .setDescription('Enter summoner name')
@@ -68,9 +68,9 @@ module.exports = {
         
         // Get solo/duo ranked stats
         let i = 0;
-        if (leagueInfo[0].queueType == 'RANKED_SOLO_5x5') {
+        if (leagueInfo[0].queueType == 'RANKED_FLEX_SR') {
             i = 0;
-        } else if (leagueInfo[1].queueType == 'RANKED_SOLO_5x5') {
+        } else if (leagueInfo[1].queueType == 'RANKED_FLEX_SR') {
             i = 1;
         } else {
             const embed = new MessageEmbed()
@@ -94,7 +94,7 @@ module.exports = {
         }
 
         const embed = new MessageEmbed()
-        .setAuthor(`${rankedStats.summonerName} - Solo/Duo`)
+        .setAuthor(`${rankedStats.summonerName} - Flex`)
         .setThumbnail(emblems[rankedStats.tier])
         .addField('Rank', rankedStats.rank, true)
         .addField('Tier', rankedStats.tier, true)
