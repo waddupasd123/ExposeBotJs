@@ -21,6 +21,7 @@ const client = new Client({
 	] 
 });
 
+
 // Command prefix
 const PREFIX = "ex ";
 
