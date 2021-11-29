@@ -1,6 +1,5 @@
 const { SlashCommandBuilder} = require('@discordjs/builders');
 const { MessageEmbed } = require('discord.js');
-const { PlatformId, RiotAPITypes, RiotAPI } = require('@fightmegg/riot-api');
 
 module.exports = {
     command: "lolrank",
@@ -79,7 +78,6 @@ module.exports = {
             return await message.edit({ content: "...", embeds: embed, })
         }
         const rankedStats = leagueInfo[i];
-        console.log(rankedStats);
 
         emblems = {
             'IRON': 'https://lolg-cdn.porofessor.gg/img/league-icons-v2/160/1-1.png',
@@ -96,8 +94,8 @@ module.exports = {
         const embed = new MessageEmbed()
         .setAuthor(`${rankedStats.summonerName} - Solo/Duo`)
         .setThumbnail(emblems[rankedStats.tier])
-        .addField('Rank', rankedStats.rank, true)
         .addField('Tier', rankedStats.tier, true)
+        .addField('Rank', rankedStats.rank, true)
         .addField('LP', `${rankedStats.leaguePoints}`, true)
         .addField('Wins/Losses', `${rankedStats.wins}/${rankedStats.losses}`, true)
         .setColor(0xFD0061);

@@ -76,7 +76,6 @@ async function sendEmbed(interaction, args) {
 
 		const collector = message.createMessageComponentCollector({
 			filter,
-			componentType: 'SELECT_MENU',
 			time: 10000,
 		});
 
@@ -106,8 +105,8 @@ async function sendEmbed(interaction, args) {
 			}
 		});
 
-		collector.on('end', collected => {
-			message.edit({ components: [] })
+		collector.on('end', async (collected) => {
+			await message.edit({ components: [] })
 		})
 
 	} else {
