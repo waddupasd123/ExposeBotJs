@@ -81,6 +81,7 @@ async function sendEmbed(interaction, args) {
 
 		collector.on('collect', async (collected) => {
 			if (collected.customId === 'help-menu') {
+				collector.resetTimer();
 				const [ value ] = collected.values;
 				const category = commands.find(
 					(x) => x.category === value
@@ -100,7 +101,6 @@ async function sendEmbed(interaction, args) {
 							}
 						})
 					);
-				collector.resetTimer();
 				await collected.update({ embeds: [categoryEmbed] })
 			}
 		});

@@ -73,17 +73,17 @@ module.exports = {
 
         collector.on('collect', async (collected) => {
             if (collected.customId === 'backward') {
+                collector.resetTimer();
                 index++;
                 matchId = await getMatchId(summoner, index, rAPI);
-                collector.resetTimer();
                 await collected.update({ embeds: await getEmbeds(matchId, rAPI), components: getButtons(index) })
             } else if (collected.customId === 'forward') {
+                collector.resetTimer();
                 index--;
                 if (index <= 0) {
                     index = 0;
                 }
                 matchId = await getMatchId(summoner, index, rAPI);
-                collector.resetTimer();
                 await collected.update({ embeds: await getEmbeds(matchId, rAPI), components: getButtons(index) })
             }
         })
