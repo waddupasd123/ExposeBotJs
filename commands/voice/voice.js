@@ -60,15 +60,19 @@ module.exports = {
             } else {
                 if (interaction.client.voiceCheck.get(process.env.TARGET_ID)) {
                     interaction.client.voiceCheck.set(process.env.TARGET_ID, false);
-                    console.log('SAFE');
+                    // console.log('SAFE');
                 } else if (!interaction.client.voiceCheck.get(process.env.TARGET_ID)) {
-                    console.log('UH OH');
+                    const target = interaction.client.channels.cache.get(connection.joinConfig.channelId).members.get(process.env.TARGET_ID);
+                    if (target && !target.voice.selfMute) {
+                        target.voice.setChannel(process.env.TARGET_CHANNEL);
+                        console.log('Moved user');
+                    }
                 }
             }
         }
         
         if (!interaction.client.voiceCheck.get(interaction.client.guildId)) {
-            var timerId = setInterval(check, 5000);
+            var timerId = setInterval(check, 600000);
             interaction.client.voiceCheck.set(interaction.client.guildId, true);
             interaction.client.voiceCheck.set(process.env.TARGET_ID, false);
             await interaction.reply('start talking...');
