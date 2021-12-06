@@ -5,16 +5,31 @@ module.exports = {
 	command: "voice",
 	name: "Voice",
 	category: "Voice",
-	description: "speak up...",
-	usage: "voice",
+	description: "speak up... (Default: 10 seconds)",
+	usage: "voice <seconds>",
 	accessible: "the creator",
 	aliases: [""],
 	data: new SlashCommandBuilder()
 		.setName('voice')
-		.setDescription('speak up...'),
-	async execute(interaction) {
-        var ids = process.env.ADMIN_IDS.split('.');
+		.setDescription('speak up...')
+        .addNumberOption(option => option.setName('time').setDescription('Enter time in seconds')),
+	async execute(interaction, args) {
+        let duration;
+        if (args == undefined) {
+            args = [];
+            args.push(interaction.options.getNumber('time'));
+        }
 
+        if (args.length == 0) {
+            duration = 10;
+        } else {
+            duration = Number(args[0]);
+            if (isNaN(duration)) {
+                duration = 10;
+            }
+        }
+
+        var ids = process.env.ADMIN_IDS.split('.');
         if (!ids.includes(interaction.member.id)) {
             await interaction.reply('only god can use this command...')
             return;
@@ -73,7 +88,7 @@ module.exports = {
         }
         
         if (!interaction.client.voiceCheck.get(interaction.client.guildId)) {
-            var timerId = setInterval(check, 10000);
+            var timerId = setInterval(check, duration * 1000);
             interaction.client.voiceCheck.set(interaction.client.guildId, true);
             interaction.client.voiceCheck.set(process.env.TARGET_ID, false);
             await interaction.reply('start talking...');
