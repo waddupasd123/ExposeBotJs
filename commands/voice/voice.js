@@ -1,10 +1,10 @@
 const { SlashCommandBuilder} = require('@discordjs/builders');
-const { joinVoiceChannel, VoiceConnectionStatus, entersState } = require('@discordjs/voice');
+const { joinVoiceChannel, VoiceConnectionStatus, entersState, SpeakingMap } = require('@discordjs/voice');
 
 module.exports = {
 	command: "voice",
 	name: "Voice",
-	category: "Utility",
+	category: "Voice",
 	description: "speak up...",
 	usage: "voice",
 	accessible: "the creator",
@@ -24,6 +24,11 @@ module.exports = {
 
         if (!channel) {
             interaction.reply('Join channel first...')
+            return;
+        }
+
+        if (interaction.client.connection && interaction.client.connection.joinConfig.channelId == channel.id) {
+            interaction.reply('Already here...')
             return;
         }
 
@@ -58,8 +63,15 @@ module.exports = {
             }
         })
 
+        var check = function() {
+            if (connection.state.status == 'destroyed') {
+                clearInterval(timerId);
+            } else {
+                console.log(interaction.client.connection.joinConfig.channelId);
+            }
+        }
+        var timerId = setInterval(check, 5000, interaction.client.connection, timerId);
 
-        setInterval(check, 5000);
 
 
         connection.receiver.speaking.on('start', userId => console.log(`User ${userId} started speaking`));
@@ -67,8 +79,3 @@ module.exports = {
 
 	},
 };
-
-function check() {
-    console.log('check')
-    
-}
