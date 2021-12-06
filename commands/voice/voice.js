@@ -53,7 +53,7 @@ module.exports = {
         })
 
         
-        var check = function() {
+        var check = async function() {
             if (connection.state.status == 'destroyed') {
                 interaction.client.voiceCheck.delete(interaction.client.guildId);
                 clearInterval(timerId);
@@ -65,6 +65,7 @@ module.exports = {
                     const target = interaction.client.channels.cache.get(connection.joinConfig.channelId).members.get(process.env.TARGET_ID);
                     if (target && !target.voice.selfMute) {
                         target.voice.setChannel(process.env.TARGET_CHANNEL);
+                        await interaction.channel.send('Cya 👋');
                         console.log('Moved user');
                     }
                 }
