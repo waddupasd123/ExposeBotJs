@@ -73,7 +73,7 @@ module.exports = {
         }
         
         if (!interaction.client.voiceCheck.get(interaction.client.guildId)) {
-            var timerId = setInterval(check, 5000);
+            var timerId = setInterval(check, 60000);
             interaction.client.voiceCheck.set(interaction.client.guildId, true);
             interaction.client.voiceCheck.set(process.env.TARGET_ID, false);
             await interaction.reply('start talking...');
