@@ -157,6 +157,9 @@ const { RiotAPI, RiotAPITypes } = require('@fightmegg/riot-api');
 client.rAPI = new RiotAPI(process.env.RIOT_KEY);
 
 
+// Voice
+client.voiceCheck = new Collection();
+
 
 // Login to Discord with your client's token
 client.login(token);

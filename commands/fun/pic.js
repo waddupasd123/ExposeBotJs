@@ -1,5 +1,4 @@
 const { SlashCommandBuilder} = require('@discordjs/builders');
-const { Console } = require('console');
 const fs = require('fs');
 const { unlink } =  require('fs/promises');
 

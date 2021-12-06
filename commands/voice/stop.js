@@ -1,5 +1,5 @@
 const { SlashCommandBuilder} = require('@discordjs/builders');
-const { joinVoiceChannel } = require('@discordjs/voice');
+const { getVoiceConnection } = require('@discordjs/voice');
 
 module.exports = {
 	command: "stop",
@@ -20,15 +20,18 @@ module.exports = {
             return;
         }
 
-        if (interaction.client.connection && interaction.client.connection.state.status != 'destroyed') {
+        const connection = getVoiceConnection(interaction.guildId);
+
+        if (connection) {
             try {
-                console.log("DESTROYED")
-                interaction.client.connection.destroy();
+                console.log("Connection destroyed")
+                connection.destroy();
             } catch (error) {
                 console.log(error);
             }
         }
 
+        interaction.client.voiceCheck.delete(interaction.client.guildId);
         await interaction.reply(';(')
 
 	},

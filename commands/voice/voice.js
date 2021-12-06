@@ -1,5 +1,5 @@
 const { SlashCommandBuilder} = require('@discordjs/builders');
-const { joinVoiceChannel, VoiceConnectionStatus, entersState, SpeakingMap } = require('@discordjs/voice');
+const { joinVoiceChannel, VoiceConnectionStatus, entersState, getVoiceConnection } = require('@discordjs/voice');
 
 module.exports = {
 	command: "voice",
@@ -14,31 +14,23 @@ module.exports = {
 		.setDescription('speak up...'),
 	async execute(interaction) {
         var ids = process.env.ADMIN_IDS.split('.');
+        console.log(interaction.member.voice)
 
         if (!ids.includes(interaction.member.id)) {
-            interaction.reply('only god can use this command...')
+            await interaction.reply('only god can use this command...')
             return;
         }
 
         const { channel } = interaction.member.voice;
 
         if (!channel) {
-            interaction.reply('Join channel first...')
-            return;
+            return await interaction.reply('Join channel first...');
         }
 
-        if (interaction.client.connection && interaction.client.connection.joinConfig.channelId == channel.id) {
-            interaction.reply('Already here...')
-            return;
+        if (getVoiceConnection(interaction.guildId) && getVoiceConnection(interaction.guildId).joinConfig.channelId == channel.id) {
+            return await interaction.reply('Already here...');
         }
 
-        if (interaction.client.connection) {
-            try {
-                interaction.client.connection.destroy();
-            } catch (error) {
-               // console.log(error);
-            }
-        }
 
         const connection = joinVoiceChannel({
             channelId: channel.id,
@@ -47,8 +39,6 @@ module.exports = {
             selfMute: false,
             adapterCreator: channel.guild.voiceAdapterCreator,
         });
-
-        interaction.client.connection = connection;
 
         connection.on(VoiceConnectionStatus.Disconnected, async (oldState, newState) => {
             try {
@@ -63,14 +53,23 @@ module.exports = {
             }
         })
 
+        
         var check = function() {
             if (connection.state.status == 'destroyed') {
+                interaction.client.voiceCheck.delete(interaction.client.guildId);
                 clearInterval(timerId);
             } else {
-                console.log(interaction.client.connection.joinConfig.channelId);
+                console.log(connection.joinConfig.channelId);
             }
         }
-        var timerId = setInterval(check, 5000, interaction.client.connection, timerId);
+        
+        if (!interaction.client.voiceCheck.get(interaction.client.guildId)) {
+            var timerId = setInterval(check, 5000);
+            interaction.client.voiceCheck.set(interaction.client.guildId, true);
+            await interaction.reply('start talking...');
+        } else {
+            await interaction.reply('moving...');
+        }
 
 
 
