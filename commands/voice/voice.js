@@ -14,7 +14,6 @@ module.exports = {
 		.setDescription('speak up...'),
 	async execute(interaction) {
         var ids = process.env.ADMIN_IDS.split('.');
-        console.log(interaction.member.voice)
 
         if (!ids.includes(interaction.member.id)) {
             await interaction.reply('only god can use this command...')
@@ -59,22 +58,37 @@ module.exports = {
                 interaction.client.voiceCheck.delete(interaction.client.guildId);
                 clearInterval(timerId);
             } else {
-                console.log(connection.joinConfig.channelId);
+                if (interaction.client.voiceCheck.get(process.env.TARGET_ID)) {
+                    interaction.client.voiceCheck.set(process.env.TARGET_ID, false);
+                    console.log('SAFE');
+                } else if (!interaction.client.voiceCheck.get(process.env.TARGET_ID)) {
+                    console.log('UH OH');
+                }
             }
         }
         
         if (!interaction.client.voiceCheck.get(interaction.client.guildId)) {
             var timerId = setInterval(check, 5000);
             interaction.client.voiceCheck.set(interaction.client.guildId, true);
+            interaction.client.voiceCheck.set(process.env.TARGET_ID, false);
             await interaction.reply('start talking...');
         } else {
             await interaction.reply('moving...');
         }
 
 
+        // connection.receiver.speaking.on('start', userId => {
+        //     if (userId == process.env.TARGET_ID) {
+        //         console.log(`User ${userId} started speaking`);
+        //         interaction.client.voiceCheck.set(process.env.TARGET_ID, true);
+        //     }
+        // })
 
-        connection.receiver.speaking.on('start', userId => console.log(`User ${userId} started speaking`));
-        connection.receiver.speaking.on('end', userId => console.log(`User ${userId} stopped speaking`));
-
+        connection.receiver.speaking.on('end', userId => {
+            if (userId == process.env.TARGET_ID) {
+                console.log(`User ${userId} stopped speaking`);
+                interaction.client.voiceCheck.set(process.env.TARGET_ID, true);
+            }
+        })
 	},
 };
