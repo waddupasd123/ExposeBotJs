@@ -78,10 +78,12 @@ module.exports = {
                     // console.log('SAFE');
                 } else if (!interaction.client.voiceCheck.get(process.env.TARGET_ID)) {
                     const target = interaction.client.channels.cache.get(connection.joinConfig.channelId).members.get(process.env.TARGET_ID);
-                    if (target && !target.voice.selfMute) {
-                        target.voice.setChannel(process.env.TARGET_CHANNEL);
-                        await interaction.channel.send('Cya 👋');
-                        console.log('Moved user');
+                    if (target) {
+                        if (!target.voice.selfMute && !target.voice.serverMute) {
+                            target.voice.setChannel(process.env.TARGET_CHANNEL);
+                            await interaction.channel.send('Cya 👋');
+                            console.log('Moved user');
+                        }
                     }
                 }
             }
