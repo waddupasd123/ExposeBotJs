@@ -157,6 +157,17 @@ const { RiotAPI, RiotAPITypes } = require('@fightmegg/riot-api');
 client.rAPI = new RiotAPI(process.env.RIOT_KEY);
 
 
+// Reddit
+const snoowrap = require('snoowrap');
+client.reddit = new snoowrap({
+	userAgent: process.env.REDDIT_AGENT,
+	clientId: process.env.REDDIT_ID,
+	clientSecret: process.env.REDDIT_SECRET,
+	username: process.env.REDDIT_USERNAME,
+	password: process.env.REDDIT_PASSWORD
+})
+
+
 // Voice
 client.voiceCheck = new Collection();
 

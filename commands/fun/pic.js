@@ -6,7 +6,7 @@ module.exports = {
     command: "pic",
 	name: "Pic",
 	category: "Fun",
-	description: "Get a pic 👀",
+	description: `Get a pic 👀 [Contribute here](https://drive.google.com/drive/folders/${process.env.FOLDER_ID}?usp=sharing)`,
 	usage: "pic",
 	accessible: "Members",
 	aliases: [""],
