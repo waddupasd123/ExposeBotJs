@@ -79,7 +79,7 @@ client.on('messageCreate', async message => {
 
 	if (message.content.toLowerCase().startsWith(PREFIX)) {
 		const [commandName, ...args] = message.content.trim().substring(PREFIX.length).split(' ');
-		const command = client.commands.get(commandName);
+		const command = client.commands.get(commandName.toLowerCase());
 
 		if (!command) return;
 
