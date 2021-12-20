@@ -2,8 +2,8 @@ const { SlashCommandBuilder} = require('@discordjs/builders');
 const { MessageEmbed } = require('discord.js');
 
 module.exports = {
-	command: "pic",
-	name: "Pic",
+	command: "reddit",
+	name: "Reddit",
 	category: "Fun",
 	description: "Get a reddit post\nTime ranges are: \`hot\` \`all\` \`year\` \`month\` \`week\` \`day\` \`hour\` \`new\` \nLeave blank for real random posts",
 	usage: "reddit | reddit <time>",
