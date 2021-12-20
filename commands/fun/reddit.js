@@ -5,7 +5,7 @@ module.exports = {
 	command: "pic",
 	name: "Pic",
 	category: "Fun",
-	description: "Get a reddit post\nTime ranges are: \`hot\` \`all\` \`year\` \`month\` \`week\` \`day\` \`hour\` \nLeave blank for real random posts",
+	description: "Get a reddit post\nTime ranges are: \`hot\` \`all\` \`year\` \`month\` \`week\` \`day\` \`hour\` \`new\` \nLeave blank for real random posts",
 	usage: "reddit | reddit <time>",
 	accessible: "Members",
 	aliases: [""],
