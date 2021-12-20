@@ -30,7 +30,7 @@ module.exports = {
 
         if (message.author.bot) return await interaction.reply('get talking fool');
         const embed = new MessageEmbed()
-        .setAuthor(message.author.tag, message.member.displayAvatarURL())
+        .setAuthor(message.author.tag, message.author.displayAvatarURL())
         .setDescription(message.content)
         .addField(`\_ \_`,`[Context](https://discordapp.com/channels/${message.guildId}/${message.channelId}/${message.id})`)
         .setTimestamp(message.createdTimestamp)
