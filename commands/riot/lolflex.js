@@ -64,6 +64,10 @@ module.exports = {
         } catch (error) {
             console.log(error);
         }
+
+        if (leagueInfo == undefined) {
+            return await message.edit('something went wrong...')
+        }
         
         // Get flex ranked stats
         let i = 0;
