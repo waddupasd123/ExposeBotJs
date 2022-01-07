@@ -66,7 +66,7 @@ module.exports = {
         }
 
         if (leagueInfo == undefined) {
-            return await message.edit('something went wrong...')
+            return await message.edit('no ranked info...')
         }
         
         // Get flex ranked stats
