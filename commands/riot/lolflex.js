@@ -64,16 +64,12 @@ module.exports = {
         } catch (error) {
             console.log(error);
         }
-
-        if (leagueInfo == undefined) {
-            return await message.edit('no ranked info...')
-        }
         
         // Get flex ranked stats
         let i = 0;
-        if (leagueInfo[0].queueType == 'RANKED_FLEX_SR') {
+        if (leagueInfo[0] != undefined && leagueInfo[0].queueType == 'RANKED_FLEX_SR') {
             i = 0;
-        } else if (leagueInfo[1].queueType == 'RANKED_FLEX_SR') {
+        } else if (leagueInfo[1] != undefined && leagueInfo[1].queueType == 'RANKED_FLEX_SR') {
             i = 1;
         } else {
             const embed = new MessageEmbed()

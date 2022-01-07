@@ -64,16 +64,12 @@ module.exports = {
         } catch (error) {
             console.log(error);
         }
-
-        if (leagueInfo == undefined) {
-            return await message.edit('no ranked info...')
-        }
         
         // Get solo/duo ranked stats
         let i = 0;
-        if (leagueInfo[0].queueType == 'RANKED_SOLO_5x5') {
+        if (leagueInfo[0] != undefined && leagueInfo[0].queueType == 'RANKED_SOLO_5x5') {
             i = 0;
-        } else if (leagueInfo[1].queueType == 'RANKED_SOLO_5x5') {
+        } else if (leagueInfo[1] != undefined && leagueInfo[1].queueType == 'RANKED_SOLO_5x5') {
             i = 1;
         } else {
             const embed = new MessageEmbed()
