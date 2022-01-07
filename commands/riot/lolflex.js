@@ -76,7 +76,7 @@ module.exports = {
             .setAuthor(summoner.name)
             .setDescription("The kid is too scared")
             .setColor(0xFD0061);
-            return await message.edit({ content: " ", embeds: embed, })
+            return await message.edit({ content: " ", embeds: [embed] })
         }
         const rankedStats = leagueInfo[i];
 
