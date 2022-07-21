@@ -108,7 +108,7 @@ async function getEmbeds(matchId, rAPI) {
     let match;
     try {
         match = await rAPI.matchV5.getMatchById({
-            cluster: "AMERICAS",
+            cluster: "SEA",
             matchId: matchId[0],
         })
     } catch (error) {
@@ -179,7 +179,7 @@ async function getMatchId(summoner, index, rAPI) {
     let matchId;
     try {
         matchId = await rAPI.matchV5.getIdsbyPuuid({
-            cluster: "AMERICAS",
+            cluster: "SEA",
             puuid: summoner.puuid,
             params: {
                 start: index,
