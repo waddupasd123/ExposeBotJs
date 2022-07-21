@@ -19,7 +19,7 @@ module.exports = {
                   .setRequired(true))
         .addStringOption(option =>
             option.setName('region')
-                  .setDescription('Enter a region (Default region: OC1)')
+                  .setDescription('(Default region: OC1): BR1, EUN1, EUW1, JP1, KR, LA1, LA2, NA1, OC1, RU, TR1')
                   .setRequired(false)
             ),
     async execute(interaction, args) {
@@ -45,6 +45,22 @@ module.exports = {
             region = args[1];
         }
 
+        // SHARDS TO REGION
+        let shard = "SEA";
+        const americas = ["br1", "la1", "la2", "na1"];
+        const asia = ["jp1", "kr",];
+        const europe = ["eun1", "euw1", "ru", "tr1"];
+        const sea = ["oc1"];
+        if (americas.includes(region.toLowerCase())) {
+            shard = "AMERICAS";
+        } else if (asia.includes(region.toLowerCase())) {
+            shard = "ASIA";
+        } else if (europe.includes(region.toLowerCase())) {
+            shard = "EUROPE";
+        } else {
+            shard = "SEA";
+        }
+
         // Get Summoner info
         let summoner;
         try {
@@ -58,10 +74,10 @@ module.exports = {
 
         // Get match id
         let index = 0;
-        let matchId = await getMatchId(summoner, index, rAPI);
+        let matchId = await getMatchId(summoner, index, rAPI, shard);
         
 
-        await message.edit({ content: " " , embeds: await getEmbeds(matchId, rAPI), components: getButtons(index) })
+        await message.edit({ content: " " , embeds: await getEmbeds(matchId, rAPI, shard), components: getButtons(index) })
 
 
         const filter = (interaction) => interaction.user.id === author.id;
@@ -75,16 +91,16 @@ module.exports = {
             if (collected.customId === 'backward') {
                 collector.resetTimer();
                 index++;
-                matchId = await getMatchId(summoner, index, rAPI);
-                await collected.update({ embeds: await getEmbeds(matchId, rAPI), components: getButtons(index) })
+                matchId = await getMatchId(summoner, index, rAPI, shard);
+                await collected.update({ embeds: await getEmbeds(matchId, rAPI, shard), components: getButtons(index) })
             } else if (collected.customId === 'forward') {
                 collector.resetTimer();
                 index--;
                 if (index <= 0) {
                     index = 0;
                 }
-                matchId = await getMatchId(summoner, index, rAPI);
-                await collected.update({ embeds: await getEmbeds(matchId, rAPI), components: getButtons(index) })
+                matchId = await getMatchId(summoner, index, rAPI, shard);
+                await collected.update({ embeds: await getEmbeds(matchId, rAPI, shard), components: getButtons(index) })
             }
         })
 
@@ -96,7 +112,7 @@ module.exports = {
 }
 
 
-async function getEmbeds(matchId, rAPI) {
+async function getEmbeds(matchId, rAPI, shard) {
     let blue, red;
     if (!matchId) {
         blue = new MessageEmbed().setTitle('...the end?').setColor(0x0000FF);
@@ -108,7 +124,7 @@ async function getEmbeds(matchId, rAPI) {
     let match;
     try {
         match = await rAPI.matchV5.getMatchById({
-            cluster: "SEA",
+            cluster: shard,
             matchId: matchId[0],
         })
     } catch (error) {
@@ -175,11 +191,11 @@ async function getEmbeds(matchId, rAPI) {
     return [blue, red];
 }
 
-async function getMatchId(summoner, index, rAPI) {
+async function getMatchId(summoner, index, rAPI, shard) {
     let matchId;
     try {
         matchId = await rAPI.matchV5.getIdsbyPuuid({
-            cluster: "SEA",
+            cluster: shard,
             puuid: summoner.puuid,
             params: {
                 start: index,
