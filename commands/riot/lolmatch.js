@@ -166,10 +166,13 @@ async function getEmbeds(matchId, rAPI, shard) {
         let deaths = participant.deaths;
         let assists = participant.assists;
         let damage = participant.totalDamageDealtToChampions;
+        let cs = participant.totalMinionsKilled;
+        let csmin = cs / match.info.gameDuration
+        csmin = Math.round(csmin * 10) / 10
         if(teamId == 100) {
-            blue.addField(summonerName, `${championName}: ${kills}/${deaths}/${assists}\n\`Damage: ${damage}\``, true);
+            blue.addField(summonerName, `${championName}: ${kills}/${deaths}/${assists}\n\`Damage: ${damage}\`\nCS: \`${cs}(${csmin})\``, true);
         } else {
-            red.addField(summonerName, `${championName}: ${kills}/${deaths}/${assists}\n\`Damage: ${damage}\``, true);
+            red.addField(summonerName, `${championName}: ${kills}/${deaths}/${assists}\n\`Damage: ${damage}\`\nCS: \`${cs} (${csmin})\``, true);
         }
     }
     
