@@ -166,13 +166,18 @@ async function getEmbeds(matchId, rAPI, shard) {
         let deaths = participant.deaths;
         let assists = participant.assists;
         let damage = participant.totalDamageDealtToChampions;
-        let cs = participant.totalMinionsKilled;
-        let csmin = cs / match.info.gameDuration
-        csmin = Math.round(csmin * 10) / 10
+        let cs = participant.totalMinionsKilled + participant.neutralMinionsKilled;
+        let csmin = cs / (match.info.gameDuration / 60);
+        csmin = Math.round(csmin * 10) / 10;
+        let deathTime = participant.totalTimeSpentDead;
+        let deathMin = Math.floor(deathTime / 60);
+        let deathSec = deathTime - (deathMin * 60);
         if(teamId == 100) {
-            blue.addField(summonerName, `${championName}: ${kills}/${deaths}/${assists}\n\`Damage: ${damage}\`\nCS: \`${cs}(${csmin})\``, true);
+            blue.addField(summonerName, `\`${championName}: ${kills}/${deaths}/${assists}\`\n` +
+            `\`Damage: ${damage}\nCS: ${cs}(${csmin}/min)\nDeath Time: ${deathMin}m ${deathSec}s\``, true);
         } else {
-            red.addField(summonerName, `${championName}: ${kills}/${deaths}/${assists}\n\`Damage: ${damage}\`\nCS: \`${cs} (${csmin})\``, true);
+            red.addField(summonerName, `\`${championName}: ${kills}/${deaths}/${assists}\`\n` +
+            `\`Damage: ${damage}\nCS: ${cs} (${csmin}/min)\nDeath Time: ${deathMin}m ${deathSec}s\``, true);
         }
     }
     
