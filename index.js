@@ -122,21 +122,10 @@ const rest = new REST({ version: '9' }).setToken(process.env.DISCORD_TOKEN);
 // Google 
 const { google } = require('googleapis');
 
-var keysEnvVar = process.env['GOOGLE_CREDS'];
-
+const keysEnvVar = process.env['GOOGLE_CREDS'];
 if (!keysEnvVar) {
 	throw new Error('The $CREDS environment variable was not found!');
 }
-
-// To parse fly.io secret var
-console.log(typeof keysEnvVar);
-if (typeof keysEnvVar == "string") {
-	keysEnvVar = process.env['GOOGLE_CREDS'];
-}
-else {
-	keysEnvVar = JSON.stringify(process.env['GOOGLE_CREDS']);
-}
-
 const keys = JSON.parse(keysEnvVar);
 
 const SCOPES = ['https://www.googleapis.com/auth/drive'];
@@ -170,7 +159,6 @@ client.rAPI = new RiotAPI(process.env.RIOT_KEY);
 
 // Reddit
 const snoowrap = require('snoowrap');
-const { Console } = require('console');
 client.reddit = new snoowrap({
 	userAgent: process.env.REDDIT_AGENT,
 	clientId: process.env.REDDIT_ID,
