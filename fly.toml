@@ -1,4 +1,4 @@
-# fly.toml file generated for exposebot on 2022-12-04T17:03:09+11:00
+# fly.toml file generated for exposebot on 2022-12-05T20:07:56+11:00
 
 app = "exposebot"
 kill_signal = "SIGINT"
