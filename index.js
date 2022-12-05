@@ -122,10 +122,19 @@ const rest = new REST({ version: '9' }).setToken(process.env.DISCORD_TOKEN);
 // Google 
 const { google } = require('googleapis');
 
-const keysEnvVar = process.env['GOOGLE_CREDS'];
+var keysEnvVar = process.env['GOOGLE_CREDS'];
+
+if (typeof keysEnvVar == "string") {
+	keysEnvVar = process.env['GOOGLE_CREDS'];
+}
+else {
+	keysEnvVar = JSON.stringify(process.env['GOOGLE_CREDS']);
+}
+
 if (!keysEnvVar) {
 	throw new Error('The $CREDS environment variable was not found!');
-  }
+}
+
 const keys = JSON.parse(keysEnvVar);
 
 const SCOPES = ['https://www.googleapis.com/auth/drive'];
