@@ -56,12 +56,22 @@ for (const folder of commandFolders) {
 }
 
 
+const allowedRoles = ['Mod','1108400754714214500','403474847877038083'];
+
 // Listens for interactions
 client.on('interactionCreate', async interaction => {
 	if (!interaction.isCommand()) return;
 	const command = client.commands.get(interaction.commandName);
 
 	if (!command) return;
+
+	const hasAllowedRole = interaction.member.roles.cache.some((role) =>
+		allowedRoles.includes(role.name) || allowedRoles.includes(role.id),
+	);
+
+	if (!hasAllowedRole) {
+		return await interaction.reply("You don't have permission to use this command.");;
+	} 
 
 	try {
 		await command.execute(interaction);
@@ -72,7 +82,6 @@ client.on('interactionCreate', async interaction => {
 
 });
 
-
 // Listens for messages
 client.on('messageCreate', async message => {
 	if (message.author.bot) return;
@@ -82,6 +91,14 @@ client.on('messageCreate', async message => {
 		const command = client.commands.get(commandName.toLowerCase());
 
 		if (!command) return;
+
+		const hasAllowedRole = message.member.roles.cache.some((role) =>
+			allowedRoles.includes(role.name) || allowedRoles.includes(role.id),
+		);
+
+		if (!hasAllowedRole) {
+			return await message.reply("You don't have permission to use this command.");;
+		} 
 
 		try {
 			await command.execute(message, args);
