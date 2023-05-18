@@ -1,9 +1,12 @@
-# fly.toml file generated for exposebot on 2022-12-05T20:07:56+11:00
+# fly.toml file generated for exposebot on 2023-05-18T01:31:00+10:00
 
 app = "exposebot"
 kill_signal = "SIGINT"
 kill_timeout = 5
 processes = []
+
+[deploy]
+  strategy = "immediate"
 
 [env]
   PORT = "8080"
@@ -31,7 +34,3 @@ processes = []
   [[services.ports]]
     handlers = ["tls", "http"]
     port = 443
-
-
-[deploy]
-  strategy = "immediate"
