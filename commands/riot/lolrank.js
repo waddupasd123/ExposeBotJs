@@ -66,12 +66,21 @@ module.exports = {
         }
         
         // Get solo/duo ranked stats
-        let i = 0;
-        if (leagueInfo[0] != undefined && leagueInfo[0].queueType == 'RANKED_SOLO_5x5') {
-            i = 0;
-        } else if (leagueInfo[1] != undefined && leagueInfo[1].queueType == 'RANKED_SOLO_5x5') {
-            i = 1;
-        } else {
+        if (leagueInfo == undefined) {
+            const embed = new MessageEmbed()
+            .setAuthor(summoner.name)
+            .setDescription("The kid is too scared")
+            .setColor(0xFD0061);
+            return await message.edit({ content: " ", embeds: [embed] })
+        }
+        let i = -1;
+        for (let j = 0; j < leagueInfo.length; j++) {
+            if (leagueInfo[j].queueType == 'RANKED_SOLO_5x5') {
+                i = j;
+                break;
+            }
+        }
+        if (i == -1) {
             const embed = new MessageEmbed()
             .setAuthor(summoner.name)
             .setDescription("The kid is too scared")
@@ -81,19 +90,20 @@ module.exports = {
         const rankedStats = leagueInfo[i];
 
         emblems = {
-            'IRON': 'https://lolg-cdn.porofessor.gg/img/league-icons-v2/160/1-1.png',
-            'BRONZE': 'https://lolg-cdn.porofessor.gg/img/league-icons-v2/160/2-1.png',
-            'SILVER': 'https://lolg-cdn.porofessor.gg/img/league-icons-v2/160/3-1.png',
-            'GOLD': 'https://lolg-cdn.porofessor.gg/img/league-icons-v2/160/4-1.png',
-            'PLATINUM': 'https://lolg-cdn.porofessor.gg/img/league-icons-v2/160/5-1.png',
-            'DIAMOND': 'https://lolg-cdn.porofessor.gg/img/league-icons-v2/160/6-1.png',
-            'MASTER': 'https://lolg-cdn.porofessor.gg/img/league-icons-v2/160/7-1.png',
-            'GRANDMASTER': 'https://lolg-cdn.porofessor.gg/img/league-icons-v2/160/8-1.png',
-            'CHALLENGER': 'https://lolg-cdn.porofessor.gg/img/league-icons-v2/160/9-1.png',
+            'IRON': 'https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-static-assets/global/default/ranked-emblem/emblem-iron.png',
+            'BRONZE': 'https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-static-assets/global/default/ranked-emblem/emblem-bronze.png',
+            'SILVER': 'https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-static-assets/global/default/ranked-emblem/emblem-silver.png',
+            'GOLD': 'https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-static-assets/global/default/ranked-emblem/emblem-gold.png',
+            'PLATINUM': 'https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-static-assets/global/default/ranked-emblem/emblem-platinum.png',
+            'EMERALD': 'https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-static-assets/global/default/ranked-emblem/emblem-emerald.png',
+            'DIAMOND': 'https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-static-assets/global/default/ranked-emblem/emblem-diamond.png',
+            'MASTER': 'https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-static-assets/global/default/ranked-emblem/emblem-master.png',
+            'GRANDMASTER': 'https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-static-assets/global/default/ranked-emblem/emblem-grandmaster.png',
+            'CHALLENGER': 'https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-static-assets/global/default/ranked-emblem/emblem-challenger.png',
         }
 
         const embed = new MessageEmbed()
-        .setAuthor(`${rankedStats.summonerName} - Solo/Duo`)
+        .setAuthor(`${rankedStats.summonerName} - Solo/Duo`, )
         .setThumbnail(emblems[rankedStats.tier])
         .addField('Tier', rankedStats.tier, true)
         .addField('Rank', rankedStats.rank, true)

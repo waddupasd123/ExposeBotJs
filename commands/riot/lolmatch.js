@@ -77,7 +77,7 @@ module.exports = {
         let matchId = await getMatchId(summoner, index, rAPI, shard);
         
 
-        await message.edit({ content: " " , embeds: await getEmbeds(matchId, rAPI, shard), components: getButtons(index) })
+        await message.edit({ content: " " , embeds: await getEmbeds(matchId, rAPI, shard, region), components: getButtons(index) })
 
 
         const filter = (interaction) => interaction.user.id === author.id;
@@ -112,7 +112,7 @@ module.exports = {
 }
 
 
-async function getEmbeds(matchId, rAPI, shard) {
+async function getEmbeds(matchId, rAPI, shard, region) {
     let blue, red;
     if (!matchId) {
         blue = new MessageEmbed().setTitle('...the end?').setColor(0x0000FF);
@@ -172,6 +172,35 @@ async function getEmbeds(matchId, rAPI, shard) {
         let deathTime = participant.totalTimeSpentDead;
         let deathMin = Math.floor(deathTime / 60);
         let deathSec = deathTime - (deathMin * 60);
+
+        // NOTE: Unused bacause too many api calls at once
+        // // Individual ranks
+        // let summonerId = participant.summonerId;
+        // let leagueInfo;
+        // try {
+        //     leagueInfo = await rAPI.league.getEntriesBySummonerId({
+        //         region: region,
+        //         summonerId: summonerId,
+        //     })
+        // } catch (error) {
+        //     console.log(error);
+        // }
+
+        // let rank = "";
+        // let rankedStats = "";
+        // if (leagueInfo[0] != undefined && leagueInfo[0].queueType == 'RANKED_SOLO_5x5') {
+        //     rankedStats = leagueInfo[0];
+        // } else if (leagueInfo[1] != undefined && leagueInfo[1].queueType == 'RANKED_SOLO_5x5') {
+        //     rankedStats = leagueInfo[1];
+        // } 
+
+        // if (rankedStats) {
+        //     const tier = rankedStats.tier.charAt(0);
+        //     const r = rankedStats.rank;
+        //     rank = tier + r;
+        // }
+
+
         if(teamId == 100) {
             blue.addField(summonerName, `\`${championName}: ${kills}/${deaths}/${assists}\`\n` +
             `\`Damage: ${damage}\nCS: ${cs}(${csmin}/min)\nDeath Time: ${deathMin}m ${deathSec}s\``, true);
@@ -181,7 +210,6 @@ async function getEmbeds(matchId, rAPI, shard) {
         }
     }
     
-
     // Duration
     let time = match.info.gameDuration;
     let hours = Math.floor(time / 60 / 60);
