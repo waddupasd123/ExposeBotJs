@@ -30,12 +30,14 @@ module.exports = {
 
         if (message.author.bot) return await interaction.reply('get talking fool');
         const embed = new MessageEmbed()
-        .setAuthor(message.author.tag, message.author.displayAvatarURL())
-        .setDescription(message.content)
-        .addField(`\_ \_`,`[Context](https://discordapp.com/channels/${message.guildId}/${message.channelId}/${message.id})`)
-        .setTimestamp(message.createdTimestamp)
-        .setImage(message.attachments.first() ? message.attachments.first().proxyURL : null,)
-        .setColor(0xFD0061);
+            .setAuthor({ name: message.author.tag, iconURL: message.author.displayAvatarURL() })
+            .setDescription(message.content)
+            .addFields(
+                { name: `\_ \_`, value: `[Context](https://discordapp.com/channels/${message.guildId}/${message.channelId}/${message.id})` }
+            )
+            .setTimestamp(message.createdTimestamp)
+            .setImage(message.attachments.first() ? message.attachments.first().proxyURL : null,)
+            .setColor(0xFD0061);
         await interaction.reply({ embeds: [embed] })
     },
 }

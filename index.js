@@ -172,6 +172,7 @@ const { RiotAPI, RiotAPITypes } = require('@fightmegg/riot-api');
 // }
 
 client.rAPI = new RiotAPI(process.env.RIOT_KEY);
+client.tAPI = new RiotAPI(process.env.TFT_KEY);
 
 
 // Reddit

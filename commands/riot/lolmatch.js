@@ -77,7 +77,7 @@ module.exports = {
         let matchId = await getMatchId(summoner, index, rAPI, shard);
         
 
-        await message.edit({ content: " " , embeds: await getEmbeds(matchId, rAPI, shard, region), components: getButtons(index) })
+        await message.edit({ content: " " , embeds: await getEmbeds(matchId, rAPI, shard), components: getButtons(index) })
 
 
         const filter = (interaction) => interaction.user.id === author.id;
@@ -88,19 +88,20 @@ module.exports = {
         })
 
         collector.on('collect', async (collected) => {
+            await collected.deferUpdate();
             if (collected.customId === 'backward') {
-                collector.resetTimer();
                 index++;
                 matchId = await getMatchId(summoner, index, rAPI, shard);
-                await collected.update({ embeds: await getEmbeds(matchId, rAPI, shard), components: getButtons(index) })
-            } else if (collected.customId === 'forward') {
+                await collected.editReply({ embeds: await getEmbeds(matchId, rAPI), components: getButtons(index) })
                 collector.resetTimer();
+            } else if (collected.customId === 'forward') {
                 index--;
                 if (index <= 0) {
                     index = 0;
                 }
                 matchId = await getMatchId(summoner, index, rAPI, shard);
-                await collected.update({ embeds: await getEmbeds(matchId, rAPI, shard), components: getButtons(index) })
+                await collected.editReply({ embeds: await getEmbeds(matchId, rAPI), components: getButtons(index) })
+                collector.resetTimer();
             }
         })
 
@@ -112,7 +113,7 @@ module.exports = {
 }
 
 
-async function getEmbeds(matchId, rAPI, shard, region) {
+async function getEmbeds(matchId, rAPI, shard) {
     let blue, red;
     if (!matchId) {
         blue = new MessageEmbed().setTitle('...the end?').setColor(0x0000FF);
@@ -140,19 +141,19 @@ async function getEmbeds(matchId, rAPI, shard, region) {
     red = new MessageEmbed().setTitle('Red Team');
     if (match.info.teams[0].teamId == 100) {
         if (match.info.teams[0].win) {
-            blue.setAuthor(`${match.info.gameMode} - Victory`);
-            red.setAuthor(`${match.info.gameMode} - Defeat`);
+            blue.setAuthor({ name:`${match.info.gameMode} - Victory` });
+            red.setAuthor({ name:`${match.info.gameMode} - Defeat` });
         } else {
-            blue.setAuthor(`${match.info.gameMode} - Defeat`);
-            red.setAuthor(`${match.info.gameMode} - Victory`);
+            blue.setAuthor({ name:`${match.info.gameMode} - Defeat` });
+            red.setAuthor({ name:`${match.info.gameMode} - Victory` });
         }
     } else {
         if (match.info.teams[0].win) {
-            blue.setAuthor(`${match.info.gameMode} - Defeat`);
-            red.setAuthor(`${match.info.gameMode} - Victory`);
+            blue.setAuthor({ name:`${match.info.gameMode} - Defeat` });
+            red.setAuthor({ name:`${match.info.gameMode} - Victory` });
         } else {
-            blue.setAuthor(`${match.info.gameMode} - Victory`);
-            red.setAuthor(`${match.info.gameMode} - Defeat`);
+            blue.setAuthor({ name:`${match.info.gameMode} - Victory` });
+            red.setAuthor({ name:`${match.info.gameMode} - Defeat` });
         }
     }
 
@@ -202,11 +203,19 @@ async function getEmbeds(matchId, rAPI, shard, region) {
 
 
         if(teamId == 100) {
-            blue.addField(summonerName, `\`${championName}: ${kills}/${deaths}/${assists}\`\n` +
-            `\`Damage: ${damage}\nCS: ${cs}(${csmin}/min)\nDeath Time: ${deathMin}m ${deathSec}s\``, true);
+            blue.addFields({ 
+                name: summonerName, 
+                value : `\`${championName}: ${kills}/${deaths}/${assists}\`\n` +
+                        `\`Damage: ${damage}\nCS: ${cs}(${csmin}/min)\nDeath Time: ${deathMin}m ${deathSec}s\``,
+                inline: true
+            });
         } else {
-            red.addField(summonerName, `\`${championName}: ${kills}/${deaths}/${assists}\`\n` +
-            `\`Damage: ${damage}\nCS: ${cs} (${csmin}/min)\nDeath Time: ${deathMin}m ${deathSec}s\``, true);
+            red.addFields({
+                name: summonerName,
+                value: `\`${championName}: ${kills}/${deaths}/${assists}\`\n` +
+                        `\`Damage: ${damage}\nCS: ${cs} (${csmin}/min)\nDeath Time: ${deathMin}m ${deathSec}s\``,
+                inline: true
+            });
         }
     }
     
@@ -214,14 +223,23 @@ async function getEmbeds(matchId, rAPI, shard, region) {
     let time = match.info.gameDuration;
     let hours = Math.floor(time / 60 / 60);
     let minutes = Math.floor(time / 60) - (hours * 60);
-    let seconds = time - (minutes * 60) - (hours * 60 * 60);
+    let seconds = Math.round(time - (minutes * 60) - (hours * 60 * 60));
     if (hours == 0) {
-        blue.setFooter(`Duration - ${minutes}m ${seconds}s`);
-        red.setFooter(`Duration - ${minutes}m ${seconds}s`);
+        blue.setFooter({
+            text: `Duration - ${minutes}m ${seconds}s`
+        });
+        red.setFooter({
+            text: `Duration - ${minutes}m ${seconds}s`
+        });
     } else {
-        blue.setFooter(`Duration - ${hours}h ${minutes}m ${seconds}s`)
-        red.setFooter(`Duration - ${hours}h ${minutes}m ${seconds}s`)
+        blue.setFooter({
+            text: `Duration - ${hours}h ${minutes}m ${seconds}s`
+        })
+        red.setFooter({
+            text: `Duration - ${hours}h ${minutes}m ${seconds}s`
+        })
     }
+
     blue.setTimestamp(match.info.gameCreation).setColor(0x0000FF);
     red.setTimestamp(match.info.gameCreation).setColor(0xFF0000);
     return [blue, red];

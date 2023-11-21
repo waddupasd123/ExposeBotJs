@@ -19,7 +19,7 @@ module.exports = {
         const embed = new MessageEmbed()
         .setAuthor(snipe.author, snipe.member.displayAvatarURL())
         .setDescription(snipe.content)
-        .setFooter('Sniped!')
+        .setFooter({ text: 'Sniped!' })
         .setTimestamp(snipe.timeStamp)
         .setImage(snipe.image)
         .setColor(0xFD0061);

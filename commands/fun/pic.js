@@ -43,33 +43,33 @@ module.exports = {
         })
 
         const isItDoneYet = drive.files
-        .get({fileId: fileData.id, alt: 'media'}, {responseType: 'stream'})
-        .then(res => {
-            return new Promise((resolve, reject) => {
-                console.log(`writing to ${fileData.name}`);
-                const dest = fs.createWriteStream(fileData.name);
-                let progress = 0;
-        
-                res.data
-                    .on('end', () => {
-                        console.log('Done downloading file.');
-                        resolve(fileData.name);
-                    })
-                    .on('error', err => {
-                        console.error('Error downloading file.');
-                        reject(err);
-                    })
-                    .on('data', d => {
-                        progress += d.length;
-                        if (process.stdout.isTTY) {
-                            process.stdout.clearLine();
-                            process.stdout.cursorTo(0);
-                            process.stdout.write(`Downloaded ${progress} bytes`);
-                        }
-                    })
-                    .pipe(dest);
+            .get({fileId: fileData.id, alt: 'media'}, {responseType: 'stream'})
+            .then(res => {
+                return new Promise((resolve, reject) => {
+                    console.log(`writing to ${fileData.name}`);
+                    const dest = fs.createWriteStream(fileData.name);
+                    let progress = 0;
+            
+                    res.data
+                        .on('end', () => {
+                            console.log('Done downloading file.');
+                            resolve(fileData.name);
+                        })
+                        .on('error', err => {
+                            console.error('Error downloading file.');
+                            reject(err);
+                        })
+                        .on('data', d => {
+                            progress += d.length;
+                            if (process.stdout.isTTY) {
+                                process.stdout.clearLine();
+                                process.stdout.cursorTo(0);
+                                process.stdout.write(`Downloaded ${progress} bytes`);
+                            }
+                        })
+                        .pipe(dest);
+                });
             });
-        });
 
         // Send after download finish
         isItDoneYet

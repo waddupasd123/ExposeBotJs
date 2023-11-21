@@ -66,11 +66,12 @@ module.exports = {
         }
         
         // Get solo/duo ranked stats
+        // This step doesn't really work
         if (leagueInfo == undefined) {
             const embed = new MessageEmbed()
-            .setAuthor(summoner.name)
-            .setDescription("The kid is too scared")
-            .setColor(0xFD0061);
+                .setAuthor({ name: summoner.name })
+                .setDescription("The kid is too scared")
+                .setColor(0xFD0061);
             return await message.edit({ content: " ", embeds: [embed] })
         }
         let i = -1;
@@ -82,9 +83,9 @@ module.exports = {
         }
         if (i == -1) {
             const embed = new MessageEmbed()
-            .setAuthor(summoner.name)
-            .setDescription("The kid is too scared")
-            .setColor(0xFD0061);
+                .setAuthor({ name: summoner.name })
+                .setDescription("The kid is too scared")
+                .setColor(0xFD0061);
             return await message.edit({ content: " ", embeds: [embed] })
         }
         const rankedStats = leagueInfo[i];
@@ -103,13 +104,15 @@ module.exports = {
         }
 
         const embed = new MessageEmbed()
-        .setAuthor(`${rankedStats.summonerName} - Solo/Duo`, )
-        .setThumbnail(emblems[rankedStats.tier])
-        .addField('Tier', rankedStats.tier, true)
-        .addField('Rank', rankedStats.rank, true)
-        .addField('LP', `${rankedStats.leaguePoints}`, true)
-        .addField('Wins/Losses', `${rankedStats.wins}/${rankedStats.losses}`, true)
-        .setColor(0xFD0061);
+            .setAuthor({ name: `${rankedStats.summonerName} - Solo/Duo` })
+            .setThumbnail(emblems[rankedStats.tier])
+            .addFields(
+                { name: 'Tier', value: rankedStats.tier, inline: true },
+                { name: 'Rank', value: rankedStats.rank, inline: true },
+                { name: 'LP', value: `${rankedStats.leaguePoints}`, inline: true },
+                { name: 'Wins/Losses', value: `${rankedStats.wins}/${rankedStats.losses}`, inline: true },
+            )
+            .setColor(0xFD0061);
         
         if (rankedStats.miniSeries) {
             let progress = rankedStats.miniSeries.progress
@@ -124,7 +127,7 @@ module.exports = {
                     promo += "☐";
                 }
             }
-            embed.addField('Promos', promo, true);
+            embed.addFields({ name: 'Promos', value: promo, inline: true});
         }
 
         await message.edit({ content: " " ,embeds: [embed] })
