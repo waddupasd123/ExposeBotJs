@@ -92,7 +92,7 @@ module.exports = {
             if (collected.customId === 'backward') {
                 index++;
                 matchId = await getMatchId(summoner, index, rAPI, shard);
-                await collected.editReply({ embeds: await getEmbeds(matchId, rAPI), components: getButtons(index) })
+                await collected.editReply({ embeds: await getEmbeds(matchId, rAPI, shard), components: getButtons(index) })
                 collector.resetTimer();
             } else if (collected.customId === 'forward') {
                 index--;
@@ -100,7 +100,7 @@ module.exports = {
                     index = 0;
                 }
                 matchId = await getMatchId(summoner, index, rAPI, shard);
-                await collected.editReply({ embeds: await getEmbeds(matchId, rAPI), components: getButtons(index) })
+                await collected.editReply({ embeds: await getEmbeds(matchId, rAPI, shard), components: getButtons(index) })
                 collector.resetTimer();
             }
         })
