@@ -160,7 +160,7 @@ async function getEmbeds(matchId, rAPI, shard) {
     // Participants
     for (let i = 0; i < 10; i++) {
         let participant = match.info.participants[i];
-        let summonerName = participant.summonerName;
+        let summonerName = participant.riotIdGameName;
         let championName = participant.championName;
         let teamId = participant.teamId;
         let kills = participant.kills;
@@ -200,7 +200,6 @@ async function getEmbeds(matchId, rAPI, shard) {
         //     const r = rankedStats.rank;
         //     rank = tier + r;
         // }
-
 
         if(teamId == 100) {
             blue.addFields({ 
