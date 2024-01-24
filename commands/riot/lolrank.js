@@ -94,7 +94,7 @@ module.exports = {
         // This step doesn't really work
         if (leagueInfo == undefined) {
             const embed = new MessageEmbed()
-                .setAuthor({ name: account.name })
+                .setAuthor({ name: summoner.name })
                 .setDescription("The kid is too scared")
                 .setColor(0xFD0061);
             return await message.edit({ content: " ", embeds: [embed] })
@@ -108,7 +108,7 @@ module.exports = {
         }
         if (i == -1) {
             const embed = new MessageEmbed()
-                .setAuthor({ name: account.name })
+                .setAuthor({ name: summoner.name })
                 .setDescription("The kid is too scared")
                 .setColor(0xFD0061);
             return await message.edit({ content: " ", embeds: [embed] })
