@@ -38,11 +38,18 @@ module.exports = {
             return await message.edit("Enter a name...");
         }
 
-        const summonerName = args[0];
+        const riotId = args[0];
+        var nameString = riotId.split('#');
+        const gameName = nameString[0];
+        const tagLine = nameString[1];
 
         let region = "oc1";
         if (args[1] != null) {
             region = args[1];
+            let lolRegions = ["br1", "eun1", "euw1", "jp1", "kr", "la1", "la2", "na1", "oc1", "ru", "tr1", "ph2", "sg2", "th2", "tw2", "vn2"]
+            if (!lolRegions.includes(region)) {
+                return await message.edit(`Available regions: ${lolRegions}`);
+            }
         }
 
         // SHARDS TO REGION
@@ -61,24 +68,40 @@ module.exports = {
             shard = "SEA";
         }
 
-        // Get Summoner info
+        // Get summoner info by name
         let summoner;
         try {
             summoner = await rAPI.summoner.getBySummonerName({
                 region: region,
-                summonerName: summonerName,
+                summonerName: riotId,
             });
         } catch (error) {
-            return await message.edit("Can't find...");
+            // Get summoner info by riot id
+            try {
+                account = await rAPI.account.getByRiotId({
+                    region: "americas",
+                    gameName: gameName,
+                    tagLine: tagLine,
+                });
+            } catch (error) {
+                return await message.edit("Can't find...");
+            }
+            // Get Summoner info
+            try {
+                summoner = await rAPI.summoner.getByPUUID({
+                    region: region,
+                    puuid: account.puuid,
+                });
+            } catch (error) {
+                return await message.edit("Can't find...");
+            }
         }
 
         // Get match id
         let index = 0;
         let matchId = await getMatchId(summoner, index, rAPI, shard);
         
-
         await message.edit({ content: " " , embeds: await getEmbeds(matchId, rAPI, shard), components: getButtons(index) })
-
 
         const filter = (interaction) => interaction.user.id === author.id;
 
@@ -129,6 +152,7 @@ async function getEmbeds(matchId, rAPI, shard) {
             matchId: matchId[0],
         })
     } catch (error) {
+        console.log(matchId[0])
         console.log(error);
         blue = new MessageEmbed().setTitle('slow down...?').setColor(0x0000FF);
         red = new MessageEmbed().setTitle('slow down...?').setColor(0xFF0000);
@@ -160,7 +184,8 @@ async function getEmbeds(matchId, rAPI, shard) {
     // Participants
     for (let i = 0; i < 10; i++) {
         let participant = match.info.participants[i];
-        let summonerName = participant.riotIdGameName;
+        let summonerName = participant.summonerName;
+        let riotId = participant.riotIdGameName + '#' + participant.riotIdTagline;
         let championName = participant.championName;
         let teamId = participant.teamId;
         let kills = participant.kills;
@@ -201,16 +226,22 @@ async function getEmbeds(matchId, rAPI, shard) {
         //     rank = tier + r;
         // }
 
+        let name = summonerName;
+        if (summonerName) {
+            name = summonerName;
+        } else {
+            name = riotId;
+        }
         if(teamId == 100) {
             blue.addFields({ 
-                name: summonerName, 
+                name: name, 
                 value : `\`${championName}: ${kills}/${deaths}/${assists}\`\n` +
                         `\`Damage: ${damage}\nCS: ${cs}(${csmin}/min)\nDeath Time: ${deathMin}m ${deathSec}s\``,
                 inline: true
             });
         } else {
             red.addFields({
-                name: summonerName,
+                name: name, 
                 value: `\`${championName}: ${kills}/${deaths}/${assists}\`\n` +
                         `\`Damage: ${damage}\nCS: ${cs} (${csmin}/min)\nDeath Time: ${deathMin}m ${deathSec}s\``,
                 inline: true
@@ -247,7 +278,7 @@ async function getEmbeds(matchId, rAPI, shard) {
 async function getMatchId(summoner, index, rAPI, shard) {
     let matchId;
     try {
-        matchId = await rAPI.matchV5.getIdsbyPuuid({
+        matchId = await rAPI.matchV5.getIdsByPuuid({
             cluster: shard,
             puuid: summoner.puuid,
             params: {

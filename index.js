@@ -158,7 +158,7 @@ client.pics = new Collection();
 
 
 // League 
-const { RiotAPI, RiotAPITypes } = require('@fightmegg/riot-api');
+const { RiotAPI, RiotAPITypes, PlatformId } = require('@fightmegg/riot-api');
 // const config = RiotAPITypes.Config = {
 //     debug: false,
 //     cache: {

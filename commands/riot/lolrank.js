@@ -36,22 +36,47 @@ module.exports = {
             return await message.edit("Enter a name...");
         }
 
-        const summonerName = args[0];
+        const riotId = args[0];
+        var nameString = riotId.split('#');
+        const gameName = nameString[0];
+        const tagLine = nameString[1];
 
         let region = "oc1";
         if (args[1] != null) {
             region = args[1];
+            let lolRegions = ["br1", "eun1", "euw1", "jp1", "kr", "la1", "la2", "na1", "oc1", "ru", "tr1", "ph2", "sg2", "th2", "tw2", "vn2"]
+            if (!lolRegions.includes(region)) {
+                return await message.edit(`Available regions: ${lolRegions}`);
+            }
         }
 
-        // Get Summoner info
+        // Get summoner info by name
         let summoner;
         try {
             summoner = await rAPI.summoner.getBySummonerName({
                 region: region,
-                summonerName: summonerName,
+                summonerName: riotId,
             });
         } catch (error) {
-            return await message.edit("Can't find...");
+            // Get summoner info by riot id
+            try {
+                account = await rAPI.account.getByRiotId({
+                    region: "americas",
+                    gameName: gameName,
+                    tagLine: tagLine,
+                });
+            } catch (error) {
+                return await message.edit("Can't find...");
+            }
+            // Get Summoner info
+            try {
+                summoner = await rAPI.summoner.getByPUUID({
+                    region: region,
+                    puuid: account.puuid,
+                });
+            } catch (error) {
+                return await message.edit("Can't find...");
+            }
         }
 
         // Get league account info
@@ -69,7 +94,7 @@ module.exports = {
         // This step doesn't really work
         if (leagueInfo == undefined) {
             const embed = new MessageEmbed()
-                .setAuthor({ name: summoner.name })
+                .setAuthor({ name: account.name })
                 .setDescription("The kid is too scared")
                 .setColor(0xFD0061);
             return await message.edit({ content: " ", embeds: [embed] })
@@ -83,7 +108,7 @@ module.exports = {
         }
         if (i == -1) {
             const embed = new MessageEmbed()
-                .setAuthor({ name: summoner.name })
+                .setAuthor({ name: account.name })
                 .setDescription("The kid is too scared")
                 .setColor(0xFD0061);
             return await message.edit({ content: " ", embeds: [embed] })
