@@ -67,33 +67,26 @@ module.exports = {
             shard = "sea";
         }
 
+        // Get summoner info by riot id
+        let account;
+        try {
+            account = await tAPI.account.getByRiotId({
+                region: "americas",
+                gameName: gameName,
+                tagLine: tagLine,
+            });
+        } catch (error) {
+            return await message.edit("Can't find...");
+        }
         // Get Summoner info
         let summoner;
         try {
-            summoner = await tAPI.tftSummoner.getBySummonerName({
+            summoner = await tAPI.tftSummoner.getByPUUID({
                 region: region,
-                summonerName: riotId,
+                puuid: account.puuid,
             });
         } catch (error) {
-            // Get summoner info by riot id
-            try {
-                account = await tAPI.account.getByRiotId({
-                    region: "americas",
-                    gameName: gameName,
-                    tagLine: tagLine,
-                });
-            } catch (error) {
-                return await message.edit("Can't find...");
-            }
-            // Get Summoner info
-            try {
-                summoner = await tAPI.tftSummoner.getByPUUID({
-                    region: region,
-                    puuid: account.puuid,
-                });
-            } catch (error) {
-                return await message.edit("Can't find...");
-            }
+            return await message.edit("Can't find...");
         }
 
         // Get match id

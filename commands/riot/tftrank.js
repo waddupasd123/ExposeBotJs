@@ -50,33 +50,27 @@ module.exports = {
             }
         }
 
+        // Get summoner info by riot id
+        let account;
+        try {
+            account = await tAPI.account.getByRiotId({
+                region: "americas",
+                gameName: gameName,
+                tagLine: tagLine,
+            });
+        } catch (error) {
+            return await message.edit("Can't find...");
+        }
+        let name = account.gameName + '#' + account.tagLine;
         // Get Summoner info
         let summoner;
         try {
-            summoner = await tAPI.tftSummoner.getBySummonerName({
+            summoner = await tAPI.tftSummoner.getByPUUID({
                 region: region,
-                summonerName: riotId,
+                puuid: account.puuid,
             });
         } catch (error) {
-            // Get summoner info by riot id
-            try {
-                account = await tAPI.account.getByRiotId({
-                    region: "americas",
-                    gameName: gameName,
-                    tagLine: tagLine,
-                });
-            } catch (error) {
-                return await message.edit("Can't find...");
-            }
-            // Get Summoner info
-            try {
-                summoner = await tAPI.tftSummoner.getByPUUID({
-                    region: region,
-                    puuid: account.puuid,
-                });
-            } catch (error) {
-                return await message.edit("Can't find...");
-            }
+            return await message.edit("Can't find...");
         }
 
         // Get ranked stats
@@ -92,7 +86,7 @@ module.exports = {
         // This step doesn't really work
         if (tftrank == undefined) {
             const embed = new MessageEmbed()
-                .setAuthor({ name: summoner.name })
+                .setAuthor({ name: name })
                 .setDescription("The kid is too scared")
                 .setColor(0xFD0061);
             return await message.edit({ content: " ", embeds: [embed] })
@@ -107,7 +101,7 @@ module.exports = {
         }
         if (i == -1) {
             const embed = new MessageEmbed()
-                .setAuthor({ name: summoner.name })
+                .setAuthor({ name: name })
                 .setDescription("The kid is too scared")
                 .setColor(0xFD0061);
             return await message.edit({ content: " ", embeds: [embed] })
@@ -128,7 +122,7 @@ module.exports = {
         }
 
         const embed = new MessageEmbed()
-        .setAuthor({ name: `${rankedStats.summonerName} - TFT` })
+        .setAuthor({ name: `${name} - TFT` })
             .setThumbnail(emblems[rankedStats.tier])
             .addFields(
                 { name: 'Tier', value: rankedStats.tier, inline: true },

@@ -50,33 +50,39 @@ module.exports = {
             }
         }
 
+        // METHOD HAS BEEN REMOVED FROM RIOT API
         // Get summoner info by name
-        let summoner;
+        // let summoner;
+        // try {
+        //     summoner = await rAPI.summoner.getBySummonerName({
+        //         region: region,
+        //         summonerName: riotId,
+        //     });
+        // } catch (error) {
+
+        // }
+
+        // Get summoner info by riot id
+        let account;
         try {
-            summoner = await rAPI.summoner.getBySummonerName({
-                region: region,
-                summonerName: riotId,
+            account = await rAPI.account.getByRiotId({
+                region: "americas",
+                gameName: gameName,
+                tagLine: tagLine,
             });
         } catch (error) {
-            // Get summoner info by riot id
-            try {
-                account = await rAPI.account.getByRiotId({
-                    region: "americas",
-                    gameName: gameName,
-                    tagLine: tagLine,
-                });
-            } catch (error) {
-                return await message.edit("Can't find...");
-            }
-            // Get Summoner info
-            try {
-                summoner = await rAPI.summoner.getByPUUID({
-                    region: region,
-                    puuid: account.puuid,
-                });
-            } catch (error) {
-                return await message.edit("Can't find...");
-            }
+            return await message.edit("Can't find...");
+        }
+        let name = account.gameName + '#' + account.tagLine;
+        // Get Summoner info
+        let summoner;
+        try {
+            summoner = await rAPI.summoner.getByPUUID({
+                region: region,
+                puuid: account.puuid,
+            });
+        } catch (error) {
+            return await message.edit("Can't find...");
         }
 
         // Get league account info
@@ -94,7 +100,7 @@ module.exports = {
         // This step doesn't really work
         if (leagueInfo == undefined) {
             const embed = new MessageEmbed()
-                .setAuthor({ name: summoner.name })
+                .setAuthor({ name: name })
                 .setDescription("The kid is too scared")
                 .setColor(0xFD0061);
             return await message.edit({ content: " ", embeds: [embed] })
@@ -108,7 +114,7 @@ module.exports = {
         }
         if (i == -1) {
             const embed = new MessageEmbed()
-                .setAuthor({ name: summoner.name })
+                .setAuthor({ name: name })
                 .setDescription("The kid is too scared")
                 .setColor(0xFD0061);
             return await message.edit({ content: " ", embeds: [embed] })
@@ -129,7 +135,7 @@ module.exports = {
         }
 
         const embed = new MessageEmbed()
-            .setAuthor({ name: `${rankedStats.summonerName} - Solo/Duo` })
+            .setAuthor({ name: `${name} - Solo/Duo` })
             .setThumbnail(emblems[rankedStats.tier])
             .addFields(
                 { name: 'Tier', value: rankedStats.tier, inline: true },
