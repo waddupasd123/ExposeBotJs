@@ -35,9 +35,9 @@ module.exports = {
 
         // Download random file
         const fileData = fileList[Math.floor(Math.random()*fileList.length)]; 
-        // Check if exists to prevent error
+        // Check if duplicate exists to prevent error
         const exists = interaction.client.pics.get(fileData.id);
-        if (exists) return await message.reply('calm down...');
+        if (exists) return await message.edit('calm down...');
         interaction.client.pics.set(fileData.id, {
             name: fileData.name,
         })
