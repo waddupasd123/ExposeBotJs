@@ -68,7 +68,7 @@ module.exports = {
             shard = "SEA";
         }
 
-        // Get summoner info by riot id
+        // Get account info by riot id
         let account;
         try {
             account = await rAPI.account.getByRiotId({
@@ -79,20 +79,10 @@ module.exports = {
         } catch (error) {
             return await message.edit("Can't find...");
         }
-        // Get Summoner info
-        let summoner;
-        try {
-            summoner = await rAPI.summoner.getByPUUID({
-                region: region,
-                puuid: account.puuid,
-            });
-        } catch (error) {
-            return await message.edit("Can't find...");
-        }
 
         // Get match id
         let index = 0;
-        let matchId = await getMatchId(summoner, index, rAPI, shard);
+        let matchId = await getMatchId(account.puuid, index, rAPI, shard);
         
         await message.edit({ content: " " , embeds: await getEmbeds(matchId, rAPI, shard), components: getButtons(index) })
 
@@ -107,7 +97,7 @@ module.exports = {
             await collected.deferUpdate();
             if (collected.customId === 'backward') {
                 index++;
-                matchId = await getMatchId(summoner, index, rAPI, shard);
+                matchId = await getMatchId(account.puuid, index, rAPI, shard);
                 await collected.editReply({ embeds: await getEmbeds(matchId, rAPI, shard), components: getButtons(index) })
                 collector.resetTimer();
             } else if (collected.customId === 'forward') {
@@ -115,7 +105,7 @@ module.exports = {
                 if (index <= 0) {
                     index = 0;
                 }
-                matchId = await getMatchId(summoner, index, rAPI, shard);
+                matchId = await getMatchId(account.puuid, index, rAPI, shard);
                 await collected.editReply({ embeds: await getEmbeds(matchId, rAPI, shard), components: getButtons(index) })
                 collector.resetTimer();
             }
@@ -268,12 +258,12 @@ async function getEmbeds(matchId, rAPI, shard) {
     return [blue, red];
 }
 
-async function getMatchId(summoner, index, rAPI, shard) {
+async function getMatchId(puuid, index, rAPI, shard) {
     let matchId;
     try {
         matchId = await rAPI.matchV5.getIdsByPuuid({
             cluster: shard,
-            puuid: summoner.puuid,
+            puuid: puuid,
             params: {
                 start: index,
                 count: 1,

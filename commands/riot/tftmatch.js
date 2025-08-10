@@ -67,7 +67,7 @@ module.exports = {
             shard = "sea";
         }
 
-        // Get summoner info by riot id
+        // Get account info by riot id
         let account;
         try {
             account = await tAPI.account.getByRiotId({
@@ -78,22 +78,12 @@ module.exports = {
         } catch (error) {
             return await message.edit("Can't find...");
         }
-        // Get Summoner info
-        let summoner;
-        try {
-            summoner = await tAPI.tftSummoner.getByPUUID({
-                region: region,
-                puuid: account.puuid,
-            });
-        } catch (error) {
-            return await message.edit("Can't find...");
-        }
 
         // Get match id
         let index = 0;
-        let matchId = await getMatchId(summoner, index, tAPI, shard);
+        let matchId = await getMatchId(account.puuid, index, tAPI, shard);
 
-        await message.edit({ content: " " , embeds: await getEmbeds(matchId, tAPI, shard, summoner), components: getButtons(index) })
+        await message.edit({ content: " " , embeds: await getEmbeds(matchId, tAPI, shard, account), components: getButtons(index) })
 
 
         const filter = (interaction) => interaction.user.id === author.id;
@@ -107,16 +97,16 @@ module.exports = {
             await collected.deferUpdate();
             if (collected.customId === 'backward') {
                 index++;
-                matchId = await getMatchId(summoner, index, tAPI, shard);
-                await collected.editReply({ embeds: await getEmbeds(matchId, tAPI, shard, summoner), components: getButtons(index) })
+                matchId = await getMatchId(account.puuid, index, tAPI, shard);
+                await collected.editReply({ embeds: await getEmbeds(matchId, tAPI, shard, account), components: getButtons(index) })
                 collector.resetTimer();
             } else if (collected.customId === 'forward') {
                 index--;
                 if (index <= 0) {
                     index = 0;
                 }
-                matchId = await getMatchId(summoner, index, tAPI, shard);
-                await collected.editReply({ embeds: await getEmbeds(matchId, tAPI, shard, summoner), components: getButtons(index) })
+                matchId = await getMatchId(account.puuid, index, tAPI, shard);
+                await collected.editReply({ embeds: await getEmbeds(matchId, tAPI, shard, account), components: getButtons(index) })
                 collector.resetTimer();
             }
         })
@@ -129,7 +119,8 @@ module.exports = {
 }
 
 
-async function getEmbeds(matchId, tAPI, shard, summoner) {
+async function getEmbeds(matchId, tAPI, shard, account) {
+    let name = account.gameName + '#' + account.tagLine;
     let embed;
     if (!matchId) {
         embed = new MessageEmbed().setTitle('...the end?').setColor(0x0000FF);
@@ -149,12 +140,12 @@ async function getEmbeds(matchId, tAPI, shard, summoner) {
     }
 
     embed = new MessageEmbed().setAuthor({ name: `TFT Match - ${matchId}`});
-    embed.setTitle(summoner.name)
+    embed.setTitle(name)
 
     // Participants
     for (let i = 0; i < match.info.participants.length; i++) {
         let participant = match.info.participants[i];
-        if (participant.puuid == summoner.puuid) {
+        if (participant.puuid == account.puuid) {
             if (participant.placement == 1) {
                 embed.addFields(
                     { name: `Placement: ${participant.placement}`, value: 'DAYUM' }
@@ -186,12 +177,12 @@ async function getEmbeds(matchId, tAPI, shard, summoner) {
     return [embed];
 }
 
-async function getMatchId(summoner, index, tAPI, shard) {
+async function getMatchId(puuid, index, tAPI, shard) {
     let matchId;
     try {
         matchId = await tAPI.tftMatch.getMatchIdsByPUUID({
             region: shard,
-            puuid: summoner.puuid,
+            puuid: puuid,
             params: {
                 start: index,
                 count: 1,

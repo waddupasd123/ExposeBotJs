@@ -52,7 +52,7 @@ module.exports = {
             }
         }
 
-        // Get summoner info by riot id
+        // Get account info by riot id
         let account;
         try {
             account = await tAPI.account.getByRiotId({
