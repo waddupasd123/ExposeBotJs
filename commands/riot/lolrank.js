@@ -74,23 +74,13 @@ module.exports = {
             return await message.edit("Can't find...");
         }
         let name = account.gameName + '#' + account.tagLine;
-        // Get Summoner info
-        let summoner;
-        try {
-            summoner = await rAPI.summoner.getByPUUID({
-                region: region,
-                puuid: account.puuid,
-            });
-        } catch (error) {
-            return await message.edit("Can't find...");
-        }
 
         // Get league account info
         let leagueInfo;
         try {
-            leagueInfo = await rAPI.league.getEntriesBySummonerId({
+            leagueInfo = await rAPI.league.getEntriesByPUUID({
                 region: region,
-                summonerId: summoner.id,
+                puuid: account.puuid,
             })
         } catch (error) {
             console.log(error);

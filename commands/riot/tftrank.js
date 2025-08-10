@@ -1,4 +1,6 @@
+const fetch = require("node-fetch");
 const { SlashCommandBuilder} = require('@discordjs/builders');
+const { RiotAPI } = require('@fightmegg/riot-api');
 const { MessageEmbed } = require('discord.js');
 
 module.exports = {
@@ -62,26 +64,36 @@ module.exports = {
             return await message.edit("Can't find...");
         }
         let name = account.gameName + '#' + account.tagLine;
-        // Get Summoner info
-        let summoner;
-        try {
-            summoner = await tAPI.tftSummoner.getByPUUID({
-                region: region,
-                puuid: account.puuid,
+
+        // Get ranked stats
+        async function getTFTRank(puuid) {
+            const url = `https://${region}.api.riotgames.com/tft/league/v1/by-puuid/${puuid}`;
+            const res = await fetch(url, {
+                headers: { "X-Riot-Token": process.env.TFT_KEY }
             });
+            if (!res.ok) throw new Error(`Error fetching TFT rank: ${res.status}`);
+            const data = await res.json();
+            return data;
+        }
+
+        let tftrank;
+        try {
+            tftrank = await getTFTRank(account.puuid);
         } catch (error) {
+            console.error(error.message);
             return await message.edit("Can't find...");
         }
 
-        // Get ranked stats
-        try {
-            tftrank = await tAPI.tftLeague.getEntriesBySummonerId({
-                region: region,
-                summonerId: summoner.id,
-            })
-        } catch (error) {
-            return await message.edit("Can't find...");
-        }
+
+        // try {
+        //     tftrank = await tAPI.tftLeague.getEntriesByPUUID({
+        //         region: region,
+        //         puuid: account.puuid,
+        //     })
+        // } catch (error) {
+        //     console.log(error);
+        //     return await message.edit("Can't find...");
+        // }
 
         // This step doesn't really work
         if (tftrank == undefined) {
