@@ -115,6 +115,11 @@ client.on('messageDelete', async message => {
 	if (message.author.bot) return;
 });
 
+// Listens for message edits
+client.esnipes = new Collection();
+client.on('messageUpdate', async message => {
+	if (message.author.bot) return;
+})
 
 // Refresh slash commands for testing
 const rest = new REST({ version: '9' }).setToken(process.env.DISCORD_TOKEN);
